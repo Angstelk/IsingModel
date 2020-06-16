@@ -5,8 +5,8 @@
 #include "Grid.hpp"
 #include "Model.hpp"
 #include "IsingModel.hpp"
-#define WIDTH 400 
-#define SIZE 1
+#define WIDTH 100 
+#define SIZE 5
 
 int main()
 {
@@ -20,36 +20,33 @@ int main()
     sf::Color kolor1(90,2,255);
     sf::Color kolor2(20,180,2);
     
-    Grid m(WIDTH,WIDTH,SIZE,kolor1,kolor2);
+    Grid m(WIDTH,WIDTH,SIZE,kolor1,kolor2); // tworzy się instancja siarki o wymirarach WIDTH, każda komórka SIZE, stany są symbolizowane przez kolor 1 i 2  
     
-    int x=0;
-    int y=0;
-    float  t =0;
-    
-    IsingModel maciek;
-    m.RandomizeGrid();
+    float  t=0;
+
+    IsingModel maciek; // instancja modelu
+    m.RandomizeGrid(); // siatka się losuje swoje stany
+
     while (window.isOpen())
     { 
         sf::Event event;
+
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) // sprawdzanie czy nie zamknąłem okna
                 window.close();
         }
 
-        window.clear();
-	
+       // window.clear();
 	
 	for(std::size_t i=0; i<m.size(); ++i)
 	{
-		window.draw(*m[i].getCell());
+		window.draw(*m[i].getCell());   // narysuj każdą komórkę w oknie
 	}	
-	t +=0.1;
-	maciek.Iteration1(&m,t);	
-	if(t > 300) t=0;	
+
+	maciek.IsingIteration(&m,t);	// wykonaj iteracje modelu na siatce m  w zależności od temperatury t 
+
 	window.display();
-	x++;
-	y++;
     }
 
     return 0;
