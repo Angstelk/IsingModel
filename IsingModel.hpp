@@ -4,13 +4,23 @@
 #include "Grid.hpp"
 #include <random>
 #include <math.h>
-
+/*
+ * Klasa dziedzicząca po Modelu, 
+ * tutaj odbywa się symulacja na zewnętrznym obiekcie - Grid 
+ *
+ *
+ * */
 class IsingModel : public Model
 {
 	private:
-		
+		 /* klasa nie posiada pól, tylko metode która dokonuje symulacji  */
 	public:
-
+	
+	IsingModel()
+	{
+	this->SetName("IsingModel"); /* konstruktor*/
+	}
+	/* pomocnicza funkcja modulo*/
     	unsigned modulo( int value, unsigned m)
        	{
     	int mod = value % (int)m;
@@ -19,38 +29,34 @@ class IsingModel : public Model
     	return mod;
 	}
 
-	void IsingIteration(Grid * grid, float T  )
+	/*
+	 * 
+	 * Główna metoda klasy, przekazane parametry do symulacji to temperatura 
+	 * i ilość kroków symulacji 
+	 * */
+	
+	void Iteration(Grid * grid, float T, long epochs)
 	{	
 
-		std::random_device rd;  //Will be used to obtain a seed for the random number engine
-    		std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    		std::uniform_real_distribution<> dis(1.0, 2.0);
-
-		int c = 0;
+		int c = 0;            // pomocnicze zmienne 
 		int r = 0;
-		int h = 0;
-		int s = 0;	
+		int h = 0;	      // hamiltonianu 
+		int s = 0;	      // stan komórki 	
 		
-		float cost = 0;
+		float cost = 0; 
 		
-		int RowColTab[2][4];
+		int RowColTab[2][4]; // pomocnicza tabela do przetrzymywania stanów sąsiadów
 		
-		int as;	
-		
-		int zmiany = 0 ;	
-		
-		for(double row = 1 ; row < grid->GetRows() ; row++)
+		// wykonaj  epochs  kroków symulacji 
+
+		for(double i= 0 ; i < epochs ; i++)
 		{
-			for(double col = 1 ; col < grid->GetColumns() ; col++ )
-			{	
 				// losowanie punktu 
 				c = rand() % grid->GetColumns();
 				r = rand() % grid->GetRows();   
 
 				s = grid->GetCellVal( r , c ); 
 					
-				as = s;	
-
 				RowColTab[0][0] = modulo(r+1, grid->GetRows());
 				RowColTab[1][0] = c;
 				RowColTab[0][1] = r;
@@ -60,32 +66,23 @@ class IsingModel : public Model
 				RowColTab[1][2] = c;
 				RowColTab[0][3] = r;
 				
-				// liczenie hamiltonianu sąsiadów punktu 
+				// liczenie hamiltonianu sąsiadów wylosowanego punktu i samego punktu 
 				
 				h = grid->GetCellVal( RowColTab[0][0] , RowColTab[1][0]) + grid->GetCellVal( RowColTab[0][1] , RowColTab[1][1]) + grid->GetCellVal( RowColTab[0][2] , RowColTab[1][2]) +  grid->GetCellVal( RowColTab[0][3] , RowColTab[1][3]);
 				
-				cost = 2 * s *h ;
-			       if( cost < 0 )
+			       cost = 2 * s *h ; // obliczenie funkcji kosztu zmiany  
+
+			       if( cost < 0 )   // jeśli koszt jest mniejszy niż 0 zmień stan komórki 
 			       {s *= -1;}	 
-			 	else if (  ((double) rand() / (RAND_MAX))< exp(-cost * T) )
+			 	else if (  ((double) rand() / (RAND_MAX))< exp(-cost * T) ) // jeśli nie to wylosuj liczbę z zakresu [0;1], jeśli będzie mniejsza niż e^(-cost*T) to zmień stan    
 				{	
-				//	printf("Wylosowalismy i zmieniamy stan %d %d  \n ", a, b );
 					s *= -1;
 				}	
 				
-				if(as != s){ zmiany ++; }
-				else{
-				//grid->GetCell(r,c).ChangeState(s);	
-				}
-			
-				grid->GetCell(r,c).ChangeState(s);		
+				grid->GetCell(r,c).ChangeState(s); // zmień stan komórki w siatce 	
 		
-			}
 
 		}		
-
-			//printf(" Zmiany %d \n " , zmiany);
-			zmiany = 0;
 	}		
 
 };

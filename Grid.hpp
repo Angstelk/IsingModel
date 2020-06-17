@@ -2,6 +2,11 @@
 #define GRID_HPP
 #include <vector>
 #include "Cell.hpp"
+/*
+ * Klasa Grid przechowuje wektor obiektów typu Cell  
+ *
+ */
+
 
 class Grid
 {
@@ -13,18 +18,21 @@ class Grid
 	public:
 
 	Grid();
+	
+	// Konstruktor parametryczny 
 	Grid( int NumColumns,int NumRows, int SizeOfCell, sf::Color Su, sf::Color Sd );
-
+	
+	// przeciązenie operatra dostępu 
 	Cell &  operator[](double i)
 	{
 		return Cells[i];
 	}
 
+	// fukcja zwracająca stan komórki w danej pozycji  
 	int  GetCellVal(int Row , int Col)
 	{
 		
 
-//  printf("GET Val : %f  Row : %d , Columns : %d , col %d \n", static_cast<float> (Row * Columns + Col), Row, Columns, Col );
 	
 		if(Row > Rows || Col > Columns)
 		{
@@ -35,20 +43,26 @@ class Grid
 		return Cells[ Row * Rows + Col ].GetState();
 	}
 	
+	// funkcja zwraca referencje do danej komórki siatki
 	Cell & GetCell(int r, int c )
 
-	{//	printf("GET CELL CIPPA : %f ",  static_cast<float> (c * Columns + r  ));
+	{
 		return Cells[ r * Rows + c  ];
 	}
 	
+	// przeciążenie operatora nawiasów 
+
 	Cell & operator()( int r , int c )
 	{
 		return Cells[ r * Rows + c ]; 
 	}	
 
 	double size(){return Rows*Columns; }
+	
+	// metody set get wektora komórek  
 	int GetColumns(){ return Columns;  } 	
 	int GetRows(){ return Rows;  } 	
+	// funkcja zmieniajaca stany siatki na losowe 	
 	void RandomizeGrid();
 };
 #endif

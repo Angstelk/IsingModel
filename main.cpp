@@ -5,30 +5,28 @@
 #include "Grid.hpp"
 #include "Model.hpp"
 #include "IsingModel.hpp"
-#define WIDTH 100 
-#define SIZE 5
+#define WIDTH 600     // makro definiujące ilosć kolumn i wierszy  
+#define SIZE 1	     // makro definiujące długosć boku kwadratowej komórki autoamtu w pikselach 		
 
-int main()
+int main(int argc, char* argv[] )
 {
 
-    sf::RenderWindow window(sf::VideoMode(WIDTH * SIZE,WIDTH * SIZE ), "Ising model");
-    sf::RectangleShape rectangle( sf::Vector2f( 1.f, 1.f ) ); 
-    rectangle.setPosition(0,0);
-    rectangle.setFillColor(sf::Color::White);
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::White);
-    sf::Color kolor1(90,2,255);
-    sf::Color kolor2(20,180,2);
-    
-    Grid m(WIDTH,WIDTH,SIZE,kolor1,kolor2); // tworzy się instancja siarki o wymirarach WIDTH, każda komórka SIZE, stany są symbolizowane przez kolor 1 i 2  
-    
-    float  t=0;
+    float  t=5000; // temperatura jako parametr modelu 
 
-    IsingModel maciek; // instancja modelu
+    sf::RenderWindow window(sf::VideoMode(WIDTH * SIZE,WIDTH * SIZE ), "Ising model"); // tworzenie okna 
+    sf::Color kolor1(90,2,255);
+    sf::Color kolor2(2,255,90);
+  
+    // definiowanie kolorów reprezentujących stany 
+    Grid m(WIDTH,WIDTH,SIZE,kolor1,kolor2); // tworzy się instancja siatki o wymiarach WIDTH komórek (gdzie  każda komórka ma SIZE pikseli), stany są symbolizowane przez kolor 1 i 2  
+    
+
+    IsingModel * Ising = new IsingModel(); // instancja modelu
     m.RandomizeGrid(); // siatka się losuje swoje stany
+ 
 
     while (window.isOpen())
-    { 
+    { 						// pętla główna programu 
         sf::Event event;
 
         while (window.pollEvent(event))
@@ -37,16 +35,14 @@ int main()
                 window.close();
         }
 
-       // window.clear();
-	
 	for(std::size_t i=0; i<m.size(); ++i)
 	{
 		window.draw(*m[i].getCell());   // narysuj każdą komórkę w oknie
 	}	
 
-	maciek.IsingIteration(&m,t);	// wykonaj iteracje modelu na siatce m  w zależności od temperatury t 
+	Ising->Iteration(&m,t, 10000);	// wykonaj 10000 kroków symulacji  modelu na siatce m  w zależności od temperatury t 
 
-	window.display();
+	window.display(); // wyswietl stan siatki 
     }
 
     return 0;

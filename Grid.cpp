@@ -5,16 +5,25 @@
 Grid::Grid()
 {
 }
-
+/*
+ * Konstruktor parametryczny
+ * NumColumns   - liczba kolumn siatki 
+ * NumRows      - liczba rzędów 
+ * SizeOfCell   - rozmiar komórki 
+ * Su 		- kolor pierwszego stanu
+ * Sd		- kolor drugiego stanu
+ * */
 Grid::Grid(int NumColumns, int NumRows, int SizeOfCell,sf::Color Su, sf::Color Sd)
 {       
 	
-	Rows     = NumRows;
-	Columns  = NumColumns;
+	Rows     = NumRows;    // przypisanie wartości 
+	Columns  = NumColumns;   
 
-	int Xpos = 0;
-	int Ypos = 0;
-	int r    = 0;
+	int Xpos = 0;		
+	int Ypos = 0;		// ustalanie pozycji komórek 
+
+	int r    = 0;		// inicjalizacyjny stan komórki  
+
 	for( int i =0  ; i < NumRows ; i++)
 	{ 
 		for(int k = 0 ; k < NumColumns ; k++)
@@ -31,9 +40,15 @@ Grid::Grid(int NumColumns, int NumRows, int SizeOfCell,sf::Color Su, sf::Color S
 	}
 }
 
+/*
+ * Funkcja losująca stany siatki
+ *
+ */
+
 void Grid::RandomizeGrid(){
-	for(unsigned int i=0;i<Cells.size();++i){
-		Cells[i].ChangeState(Cells[i].RandomState());
-		 
-	}
+
+		for(unsigned int i=0;i<Cells.size();++i)
+		{
+		Cells[i].ChangeState(Cells[i].RandomState()); 
+		}
 }

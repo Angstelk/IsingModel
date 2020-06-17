@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Cell.hpp"
-
+// konsruktor 
 Cell::Cell()
 {	
 	StateR 	= 0;
@@ -15,7 +15,7 @@ Cell::Cell()
 }
 
 
-
+// konstruktor parametryczny 
 Cell::Cell(float size, int x,int y, int val,sf::Color SUp, sf::Color SDown )
 {
 	
