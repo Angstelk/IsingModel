@@ -43,6 +43,11 @@ class Grid
 		return Cells[ Row * Rows + Col ].GetState();
 	}
 	
+	int GetCellVal(int i)
+	{
+	return Cells[i].GetState();	
+	}
+
 	// funkcja zwraca referencje do danej komórki siatki
 	Cell & GetCell(int r, int c )
 

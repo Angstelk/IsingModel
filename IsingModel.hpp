@@ -13,20 +13,117 @@
 class IsingModel : public Model
 {
 	private:
-		 /* klasa nie posiada pól, tylko metode która dokonuje symulacji  */
+	
+	double M;		// average value of spin
+	double J;		// strenght of exchange interaction if  > 0 
+	double T;		// temp * k ( stała Stefena Boltzmana )
+	double E; 		// Energy of configuration
 	public:
 	
+
 	IsingModel()
 	{
 	this->SetName("IsingModel"); /* konstruktor*/
+	M = 0; 
+	J = 1;
+	T = 0;
 	}
+
+	IsingModel(double m, double j, double t)
+	{
+	this->SetName("IsingModel"); /* konstruktor*/
+	M = m; 
+	J = j;
+	T = t;
+	}
+	
+	double GetT()
+	{
+		return T;	
+	}
+	
+	void SetT(double t)
+	{
+		T=t;
+	}
+
+	void CalcE(Grid * grid  )
+	{	E = 0;
+		double de;
+		int r;
+		int c;
+		for(int i = 0;i < grid->GetRows();i++)
+		{
+			for(int j = 0 ;j < grid->
+				      GetColumns()	; j++)
+			{
+			
+				r = i;
+				c = j;
+
+				int RowColTab[2][4]; 
+
+				int s = grid->GetCellVal( r , c ); 
+			
+				RowColTab[0][0] = modulo(r+1, grid->GetRows());
+				RowColTab[1][0] = c;
+				RowColTab[0][1] = r;
+				RowColTab[1][1] = modulo(c+1 , grid->GetColumns());
+				RowColTab[0][2] = modulo(r-1 , grid->GetRows());
+				RowColTab[1][3] = modulo(c-1 , grid->GetColumns());
+				RowColTab[1][2] = c;
+				RowColTab[0][3] = r;
+
+
+				de = (grid->GetCellVal( RowColTab[0][0] , RowColTab[1][0]) + grid->GetCellVal( RowColTab[0][1] , RowColTab[1][1]) + grid->GetCellVal( RowColTab[0][2] , RowColTab[1][2]) +  grid->GetCellVal( RowColTab[0][3] , RowColTab[1][3]));
+				
+				E += (-1)*s*de;
+			}
+		}
+
+				E /= 4;
+	}
+
+	double GetE()
+	{
+		return E;
+	}
+
+	void CalcM(Grid * grid)
+	{	
+		M = 0;
+		double sum=0;
+		for(int i;i< grid->size();i++)
+		{
+			sum+= grid->GetCellVal(i);
+		}
+		M = sum /grid->size();
+	}
+	
+	double GetM()
+	{
+		return M;
+	}
+	
+	void SetJ(double  j)
+	{
+		J = j;
+	}
+	
+	double GetJ()
+	{
+		return J;
+	}
+
+
 	/* pomocnicza funkcja modulo*/
+
     	unsigned modulo( int value, unsigned m)
        	{
-    	int mod = value % (int)m;
+    		int mod = value % (int)m;
     
-	if (value < 0){ mod += m; }
-    	return mod;
+		if (value < 0){ mod += m; }
+    		return mod;
 	}
 
 	/*
@@ -35,7 +132,7 @@ class IsingModel : public Model
 	 * i ilość kroków symulacji 
 	 * */
 	
-	void Iteration(Grid * grid, float T, long epochs)
+	void Iteration(Grid * grid, long epochs)
 	{	
 
 		int c = 0;            // pomocnicze zmienne 
@@ -43,11 +140,15 @@ class IsingModel : public Model
 		int h = 0;	      // hamiltonianu 
 		int s = 0;	      // stan komórki 	
 		
-		float cost = 0; 
+		float dE = 0; 
+
 		
 		int RowColTab[2][4]; // pomocnicza tabela do przetrzymywania stanów sąsiadów
 		
 		// wykonaj  epochs  kroków symulacji 
+		CalcM(grid);
+		CalcE(grid);
+		printf(" Magnetisation : %lf energy : %lf \n",GetM(), GetE());		
 
 		for(double i= 0 ; i < epochs ; i++)
 		{
@@ -68,13 +169,13 @@ class IsingModel : public Model
 				
 				// liczenie hamiltonianu sąsiadów wylosowanego punktu i samego punktu 
 				
-				h = grid->GetCellVal( RowColTab[0][0] , RowColTab[1][0]) + grid->GetCellVal( RowColTab[0][1] , RowColTab[1][1]) + grid->GetCellVal( RowColTab[0][2] , RowColTab[1][2]) +  grid->GetCellVal( RowColTab[0][3] , RowColTab[1][3]);
+				h = (grid->GetCellVal( RowColTab[0][0] , RowColTab[1][0]) + grid->GetCellVal( RowColTab[0][1] , RowColTab[1][1]) + grid->GetCellVal( RowColTab[0][2] , RowColTab[1][2]) +  grid->GetCellVal( RowColTab[0][3] , RowColTab[1][3]));
 				
-			       cost = 2 * s *h ; // obliczenie funkcji kosztu zmiany  
+			       dE= J * s *h ; // obliczenie zmiany energii   
 
-			       if( cost < 0 )   // jeśli koszt jest mniejszy niż 0 zmień stan komórki 
+			       if( dE< 0 )   // jeśli koszt jest mniejszy niż 0 zmień stan komórki 
 			       {s *= -1;}	 
-			 	else if (  ((double) rand() / (RAND_MAX))< exp(-cost * T) ) // jeśli nie to wylosuj liczbę z zakresu [0;1], jeśli będzie mniejsza niż e^(-cost*T) to zmień stan    
+			 	else if (  ((double) rand() / (RAND_MAX))< exp((-1) * dE/  T )) // jeśli nie to wylosuj liczbę z zakresu [0;1], jeśli będzie mniejsza niż e^(-cost/kT) to zmień stan    
 				{	
 					s *= -1;
 				}	
@@ -82,7 +183,8 @@ class IsingModel : public Model
 				grid->GetCell(r,c).ChangeState(s); // zmień stan komórki w siatce 	
 		
 
-		}		
+		}
+
 	}		
 
 };
