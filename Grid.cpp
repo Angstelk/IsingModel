@@ -13,11 +13,15 @@ Grid::Grid()
  * Su 		- kolor pierwszego stanu
  * Sd		- kolor drugiego stanu
  * */
-Grid::Grid(int NumColumns, int NumRows, int SizeOfCell,sf::Color Su, sf::Color Sd)
+Grid::Grid(int NumColumns, int NumRows, int SizeofCell,sf::Color Su, sf::Color Sd)
 {       
 	
 	Rows     = NumRows;    // przypisanie wartości 
 	Columns  = NumColumns;   
+	SizeOfCell = SizeofCell;
+	StateUp = Su;
+	StateDown = Sd; 	
+
 
 	int Xpos = 0;		
 	int Ypos = 0;		// ustalanie pozycji komórek 
@@ -40,10 +44,29 @@ Grid::Grid(int NumColumns, int NumRows, int SizeOfCell,sf::Color Su, sf::Color S
 	}
 }
 
+
+/*
+ * Funkcja tworzaca tło
+ *
+ */
+
+
+void Grid::StateDownGrid(){
+
+		for(unsigned int i=0;i<Cells.size();++i)
+		{
+		Cells[i].StateCellDown(); 
+		}
+}
 /*
  * Funkcja losująca stany siatki
  *
  */
+
+void Grid::CellUp(int r, int c)
+{
+	Cells[Rows*r + c].StateCellUp();  
+}
 
 void Grid::RandomizeGrid(){
 

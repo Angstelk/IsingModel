@@ -12,15 +12,20 @@ class Grid
 {
 
 	private:
- 	std::vector<Cell> Cells;	
+ 	
+	std::vector<Cell> Cells;	
 	int Rows;
 	int Columns;	
+	int SizeOfCell;
+	sf::Color StateUp;
+	sf::Color StateDown;
+
 	public:
 
 	Grid();
 	
 	// Konstruktor parametryczny 
-	Grid( int NumColumns,int NumRows, int SizeOfCell, sf::Color Su, sf::Color Sd );
+	Grid( int NumColumns,int NumRows, int SizeofCell, sf::Color Su, sf::Color Sd );
 	
 	// przeciązenie operatra dostępu 
 	Cell &  operator[](double i)
@@ -63,11 +68,16 @@ class Grid
 	}	
 
 	double size(){return Rows*Columns; }
-	
+	void CellUp(int r, int c);	
 	// metody set get wektora komórek  
 	int GetColumns(){ return Columns;  } 	
 	int GetRows(){ return Rows;  } 	
 	// funkcja zmieniajaca stany siatki na losowe 	
+	int GetSizeOfCell(){ return SizeOfCell; }
+	sf::Color GetColorUp(){ return StateUp;  }
+	sf::Color GetColorDown(){return StateDown;  }
 	void RandomizeGrid();
+	void StateDownGrid();
+
 };
 #endif

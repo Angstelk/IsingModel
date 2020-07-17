@@ -5,7 +5,7 @@ C_SOURCES = main.cpp\
 	       Grid.cpp	
  
 #Compiler flags (.C)
-C_FLAGS = -Wall
+C_FLAGS = -Wall -g
  
 #Compiler
 CC = g++
