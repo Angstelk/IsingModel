@@ -117,7 +117,7 @@ class RandomWalkModel: public Model
 		int C = 0;
 		
 
-		for(int i = 0; i < Particles.size(); i++)
+		for(int i = 0; i <(int) Particles.size(); i++)
 		{
 			RandomStep(&Particles[i]);
 	
