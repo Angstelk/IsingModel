@@ -1,38 +1,66 @@
 #include <SFML/Graphics.hpp>
+
 #include <iostream>
 #include <vector>
 #include "Cell.hpp"
 #include "Grid.hpp"
 #include "Model.hpp"
 #include "RandomWalkModel.hpp"
-
 #include "IsingModel.hpp"
 #include "GameOfLife.hpp"
 #define WIDTH 80 // makro definiujące ilosć kolumn i wierszy siatki  
-#define SIZE 10 	     //  makro definiujące długosć boku kwadratowej komórki autoamtu w pikselach 		
-   	
+#define SIZE 2 	     //  makro definiujące długosć boku kwadratowej komórki autoamtu w pikselach 			
 int main(int argc, char* argv[] )
 {
-     float  t=10;  // parametr jako 1/(k * T) k - stała stefana boltzmana T temperatura 
-     t=atof(argv[1]);
+       // parametr jako 1/(k * T) k - stała stefana boltzmana T temperatura 
+     
+     float t=atof(argv[1]);
      int L = atoi(argv[2]);
-   sf::Color kolor1(100,33,66);
-   sf::Color kolor2(90,240,255);
+     
+     float inter_1 = 0.3;
+     float inter_2 = 0.1;
+     float T_tab[100];  
+   sf::Color kolor1(255,80,10);
+   sf::Color kolor2(10,80,255);
    // definiowanie kolorów reprezentujących stany 
-    Grid * grid_ptr = new Grid(L,L,SIZE,kolor1,kolor2); // tworzy się instancja siatki o wymiarach WIDTH komórek (gdzie  każda komórka ma SIZE pikseli), stany są symbolizowane przez kolor 1 i 2  
- 
+    Grid * grid_ptr = new Grid(L,L,SIZE,kolor1,kolor2); // tworzy się instancja siatki o wymiarach WIDTH komórek (gdzie  każda komórka ma SIZE pikseli), stany są symbolizowane przez kolor 1 i 2   
+     IsingModel * IM_ptr = new IsingModel(1, 1, t); // instancja modelu
+     //grid_ptr->RandomizeGrid();
+     grid_ptr->StateDownGrid();
+     //
+     if(atoi(argv[3]) == 3)
+     { 
+	     T_tab[0]=0;
 
-     IsingModel * IM_ptr = new IsingModel(1, 1, t ); // instancja modelu
-     grid_ptr->RandomizeGrid();
-     //grid_ptr->StateDownGrid();
-     IM_ptr->Iteration(grid_ptr);
+	for(int i =1 ;i<47; i++)
+	{  
 
-    sf::RenderWindow window1(sf::VideoMode(L* SIZE,L * SIZE ), "" ) ; // tworzenie okna 
+     	IM_ptr->Iteration(grid_ptr,atoi(argv[3]),T_tab[i-1]);
+
+
+
+		if(( T_tab[i-1] > 1.3)  && ( T_tab[i-1] <3.1) )
+		{
+			T_tab[i]= T_tab[i-1]+inter_2;
+		}
+		else { T_tab[i]= T_tab[i-1]+inter_1;}
+		
+	
+	}
+
+     } 
+     
+/*
+     sf::RenderWindow window1(sf::VideoMode(L* SIZE,L * SIZE ), "" ) ; // tworzenie okna 
+			for(std::size_t i=0; i<grid_ptr->size(); ++i)
+			{
+				window1.draw(* grid_ptr->operator[](i).getCell());   // narysuj każdą komórkę w oknie
+			}	
+
+			window1.display(); // wyswietl stan siatki 
 	while (window1.isOpen()) 
 	{
         	sf::Event event;
-
-
 
         	while (window1.pollEvent(event))
        		{
@@ -41,15 +69,10 @@ int main(int argc, char* argv[] )
 		}
 	
  	
-			for(std::size_t i=0; i<grid_ptr->size(); ++i)
-			{
-				window1.draw(* grid_ptr->operator[](i).getCell());   // narysuj każdą komórkę w oknie
-			}	
-
-			window1.display(); // wyswietl stan siatki 
 
 
-    }
+
+    }*/
      return 0;
 }
 

@@ -18,11 +18,12 @@ class IsingModel : public Model
 	double J;		// strenght of exchange interaction if  > 0 
 	double T;		// 1/temp * k ( stała Stefena Boltzmana )
 	double E; 		// Energy of configuration
-	//long int steps_of_simulation = 230000; // parametry do symulacji
-	long int steps_of_simulation = 100000; // parametry do symulacji
+	long int steps_of_simulation =230000;
+ 	//230000; // parametry do symulacji
+		//long int steps_of_simulation = 100000; // parametry do symulacji
 	int skip_first_steps = 30000;
 	int inter = 100;
-
+	
 	public:
 	
 
@@ -54,10 +55,11 @@ class IsingModel : public Model
 	/* 
 	 *Calculate Energy of Neighbourhood 
 	 */
-	void CalcPhysicalParameters(Grid *grid, float* usedConfigs, float* m)
+	void CalcPhysicalParameters(Grid *grid, float* usedConfigs, float* m, int option, int MCS)
 	{	
 		float mTemp=0;
-
+		// flips 
+		float flip_temp = 0;
 		for(int x=0;x<grid->GetColumns();x++)
 		{
 			for(int y=0;y<grid->GetRows();y++)
@@ -65,13 +67,21 @@ class IsingModel : public Model
 				mTemp +=grid->GetCellVal(x,y);
 			}	
 		}	
+		
+		if(option == 1)
+		{
+		flip_temp = mTemp/ ((grid->GetRows()*grid->GetColumns()));
+		printf("%d , %.3f \n", MCS, flip_temp );
+		}
+		if(option == 3 ) // namagnesowanie 
+		{
 
 		mTemp = abs(mTemp)/ (grid->GetRows()*grid->GetColumns());
 		*m += mTemp;
+		}
 		
-		//printf("%.3f\n",  mTemp );
-		//printf("%.3e\n", *m );
 	}
+
 	double CEoN(Grid * grid, int r, int c )
 	{
 				int RowColTab[2][4]; 
@@ -93,28 +103,14 @@ class IsingModel : public Model
 	
 	}
 
-	void CalcE(Grid * grid  )
-	{	E = 0;
-		double de;
-		int r;
-		int c;
-
-		for(int i = 0;i < grid->GetRows();i++)
-		{
-			for(int j = 0 ;j < grid->GetColumns(); j++)
-			{
-			
-				r = i;
-				c = j;
-
-				int s = grid->GetCellVal( r , c ); 
-				de = CEoN(grid, r, c);
-
-				E += (-1)*s*de;
-			}
-		}
-
-				E /= 4;
+	// ceon with next and prev  table 
+	double CEoNP(Grid * grid, int r, int c, int* N, int *  P  )
+	{
+				
+	 double de = 2* grid->GetCellVal(r,c) * ( grid->GetCellVal(N[r],c) + grid->GetCellVal(P[r],c) + grid->GetCellVal(r,N[c]) + grid->GetCellVal(r,P[c]));
+	
+	return de;
+	
 	}
 
 	double GetE()
@@ -165,7 +161,7 @@ class IsingModel : public Model
 	 * i ilość kroków symulacji 
 	 * */
 	
-	void Iteration(Grid * grid)
+	void Iteration(Grid * grid, int option, float T_opt )
 	{	
 
 		int c = 0;            // pomocnicze zmienne 
@@ -174,37 +170,61 @@ class IsingModel : public Model
 		int s = 0;	      // stan komórki 	
 		
 		float dE = 0; 
+		int P[grid->GetRows()];
+		int N[grid->GetColumns()];
+		for(int i = 0; i < grid->GetRows(); i++)
+		{//nearest neighbor
+		
+		N[i] = i + 1;//next
+		P[i] = i - 1;//previous
+		
+		}
+		
+		P[0] = grid->GetRows()-1;
+		N[grid->GetRows()-1] = 0;			
 
 		
 	//	int RowColTab[2][4]; // pomocnicza tabela do przetrzymywania stanów sąsiadów
 		
-		// wykonaj  epochs  kroków symulacji 
-		CalcM(grid);
-		CalcE(grid);
 		//printf(" Magnetisation : %lf energy : %lf \n",GetM(), GetE());		
 		float  m = 0,  usedConfigs = (steps_of_simulation-skip_first_steps)/inter;
+		double omega ; 
+		float R;
+		int S[grid->GetColumns()][grid->GetColumns()];
+		
+		for(int i = 0; i <grid->GetColumns() ; i++){//initial config
+			
+			for(int j = 0; j < grid->GetColumns(); j++)
+			{
+				S[i][j] = 1;
+			}
+		}
 
-		for(double i= 0 ; i < steps_of_simulation ; i++)
+		for(int i= 0 ; i < steps_of_simulation ; i++)
 		{
-				// MCS - iteracja po siatce
-				for(double x = 0; x < grid->GetColumns();x++)
+					// MCS - iteracja po siatce
+				for(int x = 0; x < grid->GetColumns();x++)
 				{
-					for(double y = 0; y < grid->GetRows();y++)
-					{
-							
+					for(int y = 0; y < grid->GetRows();y++)
+					{		
 						c = y;
 						r = x;   
 
 						s = grid->GetCellVal( r , c ); 
-			       			h = CEoN(grid,r,c); 
-						dE = (2)* s *h ; // obliczenie zmiany energii   
+			       			dE = CEoNP(grid,r,c,N,P); 
 
 			       			if( dE< 0 )   // jeśli koszt jest mniejszy niż 0 zmień stan komórki 
 						{s *= -1;}	 
-			 			else if (  ((double) rand() / (RAND_MAX ))< exp((-1) * dE/T )) // jeśli nie to wylosuj liczbę z zakresu [0;1], jeśli będzie mniejsza niż e^(-cost/kT) to zmień stan    
-						{	
-							s *= -1;
-						}	
+			 			else 
+						{
+						 
+						 omega = exp(-dE/T_opt);
+						 R = (float)rand()/RAND_MAX;
+						if(R <= omega)
+						{
+						s *= -1;
+						}		
+						}   
 						
 						grid->GetCell(r,c).ChangeState(s); // zmień stan komórki w siatce 	
 		
@@ -214,14 +234,43 @@ class IsingModel : public Model
 
 				if(modulo(i, inter)==0 && i>=skip_first_steps)
 				{ 
-					CalcPhysicalParameters( grid, &usedConfigs,&m );
-		
-		
+					CalcPhysicalParameters( grid, &usedConfigs,&m,option, i);	
+					
 				}
-}
+		}
+		if(option == 3 )
+		{
+			
 		m /= usedConfigs;
-		printf("m = %.3e , T= %.3f, L = %d \n" , m , T, grid->GetColumns());	
+		printf(" %.3f , %.3f \n" ,T_opt,  m );
+		//printf("m = %.3e , T= %.3f, L = %d \n" , m , T_opt, grid->GetColumns());	
+		}	
 }		
 
+
+
+	void CalcE(Grid * grid  )
+	{	E = 0;
+		double de;
+		int r;
+		int c;
+		
+		for(int i = 0;i < grid->GetRows();i++)
+		{	
+			for(int j = 0 ;j < grid->GetColumns(); j++)
+			{
+			
+				r = i;
+				c = j;
+
+				int s = grid->GetCellVal( r , c ); 
+				de = CEoN(grid, r, c);
+
+				E += (-1)*s*de;
+			}
+		}
+
+				E /= 4;
+	}
 };
 #endif
