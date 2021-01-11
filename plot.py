@@ -15,22 +15,29 @@ f33= " opt33"
 b = 0.125
 v = 1 
 def transform_data(x,y,L):
-    T_c = 2.69
-    print("x" , x)
-    print("y", y)
-    print("L", L)
+    T_c = 2.269
+    #print("x" , x)
+    #print("y", y)
+    #print("L", L)
     L_y=math.pow(L, b/v)
-    print("L_y", L_y)
+    #print("L_y", L_y)
     y_n = np.multiply(y,L_y)
-    print("y_n" , y_n)
+    #print("y_n" , y_n)
     y_n = [math.log(a) for a in y_n]
-    print("y_n" , y_n)
-    
+    #print("y_n" , y_n)
+    print(L) 
     L_x = math.pow(L,v)
+    print("Lx", L_x,) 
+    print("x \n",x)
     x_n = np.multiply(x, 1/T_c) 
-    x_n =  [b-1 for b in x_n] 
+    print("x_n \n",x_n)
+    x_n =  [-b+1 for b in x_n] 
+    print("-x_n+ 1 \n",x_n)
+
     x_n = [abs(a) for a in x_n ]
+    print("abs x_n \n",x_n)
     x_n = np.multiply(x_n,L_x)  
+    x_n = [math.log(a) for a in x_n]
     return x_n, y_n  
 
 print("STARTING ...")
@@ -53,11 +60,17 @@ if(option  == " 3 " ):
     y = data[1]
     plt.plot(x, y,"*" )# Plot some data on the (implicit) axes.
 
+    data = pd.read_csv("opt33",sep=' ,',header=None, engine = 'python')
+    data = pd.DataFrame(data) 
+    
+    x = data[0]
+    y = data[1]
+    plt.plot(x, y,"*" )# Plot some data on the (implicit) axes.
     plt.xlabel('T')
     plt.grid(1,'major')
     plt.ylabel('m')
-    plt.savefig("L520"+".png")
-    os.system("chromium " + "L520" +".png")
+    plt.savefig("Magnetyzacja"+".png")
+    os.system("chromium " + "Magnetyzacja" +".png")
     
     command = "main.out" + t + 20 + option  + ">" + f32 +" "  
     os.system("./" + command)
@@ -82,11 +95,21 @@ if(option == " 4 "):
     x,y = transform_data(x,y,20)
     plt.plot(x, y,"*" )# Plot some data on the (implicit) axes.
 
+    data = pd.read_csv("opt33",sep=' ,',header=None, engine = 'python')
+    data = pd.DataFrame(data) 
+    
+    x = data[0]
+    y = data[1]
+    x,y = transform_data(x,y,80)
+
+    plt.plot(x, y,"*" )# Plot some data on the (implicit) axes.
     plt.xlabel('T')
     plt.grid(1,'major')
-    plt.ylabel('m')
-    plt.savefig("wykres"+".png")
-    os.system("chromium " + "wykres" +".png")
+    plt.xlabel('ln(|1-t/t_c|)L^(1/v)')
+    plt.ylabel('ln[mL^(b/v)]')
+    plt.savefig("skalowanie"+".png")
+    plt.show()
+    os.system("chromium " + "skalowanie" +".png")
     
 
 if(option  == " 1 "):

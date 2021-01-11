@@ -17,8 +17,8 @@ int main(int argc, char* argv[] )
      float t=atof(argv[1]);
      int L = atoi(argv[2]);
      
-     float inter_1 = 0.3;
-     float inter_2 = 0.1;
+     float inter_1 = 0.1;
+     float inter_2 = 0.05;
      float T_tab[100];  
    sf::Color kolor1(255,80,10);
    sf::Color kolor2(10,80,255);
@@ -32,7 +32,7 @@ int main(int argc, char* argv[] )
      { 
 	     T_tab[0]=0;
 
-	for(int i =1 ;i<47; i++)
+	for(int i =1 ;i<60; i++)
 	{  
 
      	IM_ptr->Iteration(grid_ptr,atoi(argv[3]),T_tab[i-1]);
