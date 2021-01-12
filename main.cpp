@@ -17,7 +17,7 @@ int main(int argc, char* argv[] )
      float t=atof(argv[1]);
      int L = atoi(argv[2]);
      
-     float inter_1 = 0.1;
+     float inter_1 = 0.2;
      float inter_2 = 0.05;
      float T_tab[100];  
    sf::Color kolor1(255,80,10);
@@ -39,7 +39,7 @@ int main(int argc, char* argv[] )
 
 
 
-		if(( T_tab[i-1] > 1.3)  && ( T_tab[i-1] <3.1) )
+		if(( T_tab[i-1] > 1)  && ( T_tab[i-1] <2.7) )
 		{
 			T_tab[i]= T_tab[i-1]+inter_2;
 		}
