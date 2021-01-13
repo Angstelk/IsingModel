@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-
 #include <iostream>
 #include <vector>
 #include "Cell.hpp"
@@ -9,7 +8,7 @@
 #include "IsingModel.hpp"
 #include "GameOfLife.hpp"
 #define WIDTH 80 // makro definiujące ilosć kolumn i wierszy siatki  
-#define SIZE 2 	     //  makro definiujące długosć boku kwadratowej komórki autoamtu w pikselach 			
+#define SIZE 10 	     //  makro definiujące długosć boku kwadratowej komórki autoamtu w pikselach 			
 int main(int argc, char* argv[] )
 {
        // parametr jako 1/(k * T) k - stała stefana boltzmana T temperatura 
@@ -17,29 +16,28 @@ int main(int argc, char* argv[] )
      float t=atof(argv[1]);
      int L = atoi(argv[2]);
      
-     float inter_1 = 0.2;
-     float inter_2 = 0.05;
+     float inter_1 = 0.1;
+     float inter_2 = 0.03;
      float T_tab[100];  
-   sf::Color kolor1(255,80,10);
-   sf::Color kolor2(10,80,255);
+   sf::Color kolor1(255,8,0);
+   sf::Color kolor2(0,10,255);
    // definiowanie kolorów reprezentujących stany 
     Grid * grid_ptr = new Grid(L,L,SIZE,kolor1,kolor2); // tworzy się instancja siatki o wymiarach WIDTH komórek (gdzie  każda komórka ma SIZE pikseli), stany są symbolizowane przez kolor 1 i 2   
      IsingModel * IM_ptr = new IsingModel(1, 1, t); // instancja modelu
      //grid_ptr->RandomizeGrid();
+     
+     
      grid_ptr->StateDownGrid();
-     //
+     
      if(atoi(argv[3]) == 3)
      { 
 	     T_tab[0]=0;
 
-	for(int i =1 ;i<60; i++)
+	for(int i =1 ;5.5>T_tab[i-1]; i++)
 	{  
+     		IM_ptr->Iteration(grid_ptr,atoi(argv[3]),T_tab[i-1]);
 
-     	IM_ptr->Iteration(grid_ptr,atoi(argv[3]),T_tab[i-1]);
-
-
-
-		if(( T_tab[i-1] > 1)  && ( T_tab[i-1] <2.7) )
+		if(( T_tab[i-1] > 0.5)  && ( T_tab[i-1] <2.6) )
 		{
 			T_tab[i]= T_tab[i-1]+inter_2;
 		}
@@ -50,7 +48,8 @@ int main(int argc, char* argv[] )
 
      } 
      
-/*
+     IM_ptr->Iteration(grid_ptr,atoi(argv[3]),atoi(argv[1]));
+
      sf::RenderWindow window1(sf::VideoMode(L* SIZE,L * SIZE ), "" ) ; // tworzenie okna 
 			for(std::size_t i=0; i<grid_ptr->size(); ++i)
 			{
@@ -72,7 +71,7 @@ int main(int argc, char* argv[] )
 
 
 
-    }*/
+    }
      return 0;
 }
 

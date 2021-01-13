@@ -46,21 +46,21 @@ if(option  == " 3 " ):
     #command = "main.out" + t + 5 + option  + ">" + f31 +" "  
     #os.system("./" + command)
 
-    data = pd.read_csv("opt31",sep=' ,',header=None, engine = 'python')
+    data = pd.read_csv("Andrzej/opt1",sep=' ,',header=None, engine = 'python')
     data = pd.DataFrame(data) 
     
     x = data[0]
     y = data[1]
     plt.figure()
     plt.plot(x, y,"." )# Plot some data on the (implicit) axes.
-    data = pd.read_csv("opt32",sep=' ,',header=None, engine = 'python')
+    data = pd.read_csv("Andrzej/opt2",sep=' ,',header=None, engine = 'python')
     data = pd.DataFrame(data) 
     
     x = data[0]
     y = data[1]
     plt.plot(x, y,"*" )# Plot some data on the (implicit) axes.
 
-    data = pd.read_csv("opt33",sep=' ,',header=None, engine = 'python')
+    data = pd.read_csv("Andrzej/opt3",sep=' ,',header=None, engine = 'python')
     data = pd.DataFrame(data) 
     
     x = data[0]
@@ -69,17 +69,13 @@ if(option  == " 3 " ):
     plt.xlabel('T')
     plt.grid(1,'major')
     plt.ylabel('m')
-    plt.savefig("Magnetyzacja"+".png")
-    os.system("chromium " + "Magnetyzacja" +".png")
+    plt.savefig("Magnetyzacja_Andrzej"+".png")
+    os.system("chromium " + "Magnetyzacja_Andrzej" +".png")
     
-    command = "main.out" + t + 20 + option  + ">" + f32 +" "  
-    os.system("./" + command)
-    command = "main.out" + t + 80 + option  + ">" + f33 +" "  
-    os.system("./" + command)
 
 if(option == " 4 "):
     
-    data = pd.read_csv("opt31",sep=' ,',header=None, engine = 'python')
+    data = pd.read_csv("Andrzej/opt1",sep=' ,',header=None, engine = 'python')
     data = pd.DataFrame(data) 
     
     x = data[0]
@@ -87,7 +83,7 @@ if(option == " 4 "):
     x,y = transform_data(x,y,5)
     plt.figure()
     plt.plot(x, y,"." )# Plot some data on the (implicit) axes.
-    data = pd.read_csv("opt32",sep=' ,',header=None, engine = 'python')
+    data = pd.read_csv("Andrzej/opt2",sep=' ,',header=None, engine = 'python')
     data = pd.DataFrame(data) 
     
     x = data[0]
@@ -95,7 +91,7 @@ if(option == " 4 "):
     x,y = transform_data(x,y,20)
     plt.plot(x, y,"*" )# Plot some data on the (implicit) axes.
 
-    data = pd.read_csv("opt33",sep=' ,',header=None, engine = 'python')
+    data = pd.read_csv("Andrzej/opt3",sep=' ,',header=None, engine = 'python')
     data = pd.DataFrame(data) 
     
     x = data[0]
@@ -114,26 +110,21 @@ if(option == " 4 "):
 
 if(option  == " 1 "):
 
-    command = "main.out" + t + Ln + option  + ">" + f 
-    os.system("make")
-    os.system("./" + command)
-
+    data = pd.read_csv('flips2',sep=' ,',header=None, engine = 'python')
+    data = pd.DataFrame(data)
+    
+    
+    x = data[0]
+    y = data[1]
+    plt.figure()
+    plt.plot(x, y,"." )# Plot some data on the (implicit) axes.
+    plt.xlabel('MCS')
+    plt.grid(1,'major')
+    plt.ylabel('m')
+    plt.title("Flips")
+    plt.savefig("flips3.png")
+    os.system("chromium " + "flips3" + ".png")
 '''
-data = pd.read_csv('wyniki2',sep=' ,',header=None, engine = 'python')
-data = pd.DataFrame(data)
-
-
-x = data[0]
-y = data[1]
-plt.figure()
-plt.plot(x, y,"." )# Plot some data on the (implicit) axes.
-plt.xlabel('MCS')
-plt.grid(1,'major')
-plt.ylabel('m')
-plt.title("Flips")
-plt.savefig("flips2.png")
-
-os.system("chromium " + "flips2" + ".png")
 x = data_fi[0]
 y = data_fi[1]
 sum(x)

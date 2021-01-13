@@ -18,7 +18,7 @@ class IsingModel : public Model
 	double J;		// strenght of exchange interaction if  > 0 
 	double T;		// 1/temp * k ( stała Stefena Boltzmana )
 	double E; 		// Energy of configuration
-	long int steps_of_simulation =230000;
+	long int steps_of_simulation =130000;
  	//230000; // parametry do symulacji
 		//long int steps_of_simulation = 100000; // parametry do symulacji
 	int skip_first_steps = 30000;
